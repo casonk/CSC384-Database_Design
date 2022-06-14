@@ -1,0 +1,178 @@
+
+SELECT * FROM R ORDER BY a, b DESC; [1]
+
+SELECT * FROM R 
+ORDER BY a ASC, b DESC;
+
+R
+--
+ a  b   c
+(4, 14, 24)
+(6, 16, 24)
+(5, 16, 26)
+(4, 15, 26)
+(5, 15, 25)
+
+Result: 
+a  b   c
+4  15  26
+4  14  24
+5  16  26
+5  15  25
+6  16  24
+
+-----------------
+
+SELECT COUNT(DISTINCT c) AS num FROM R
+
+R
+a		b	c
+1		10	20
+NULL	11	22
+2		12	22
+
+num
+2
+
+SELECT c, COUNT(DISTINCT c) AS num FROM R 
+GROUP BY c
+
+c	num
+20	1
+22	1
+
+--------------------
+
+6. find the model number and price of any type made by A
+
+find the model number and price of PCs made by A
+UNION
+find the model number and price of Laptops made by A
+UNION
+find the model number and price of printers made by A;
+
+-- I do not recommend outer joins
+
+??. find hard disk that occur in 2 or more PCs..
+
+SELECT hd
+FROM PC
+GROUP BY hd
+HAVING COUNT(model) >= 2;
+
+SELECT *
+FROM (select hd, count(model) AS num FROM PC GROUP BY hd)
+WHERE num >= 2;
+
+model	hd	...
+1001	200
+1002	100
+1003	100
+
+self-join
+
+SELECT *
+FROM PC T1, PC T2
+WHERE T1.hd = T2.hd AND T1.model < T2.model
+
+model	hd				model	hd
+1001	200				1001	200
+1002	100				1002	100
+1003	100				1003	100
+
+T1.model	T1.hd	T2.model	T2.hd
+1002		100		1003		100
+1003		100		1002		100
+
+----------------
+
+find the smallest hd from PC table..
+
+SELECT *
+FROM PC
+WHERE hd <= ALL (select hd from PC);
+
+SELECT MIN(hd)
+FROM PC
+
+there is a way of using self-joins to find the min/max without using aggregate functions..
+
+hds that are not minimum:
+SELECT *
+FROM PC T1, PC T2
+WHERE T1.hd > T2.hd AND T1.model != T2.model
+
+(all HDs) - (hds that are not minimum)
+
+-------------------------
+
+INSERT, DELETE, UPDATE
+
+PC (model, price, hd)
+1501	-1		250
+1502	null	250
+
+Laptop (model, price, hd, screen)
+1501	-1		250	17
+1502	null	250	17
+
+CREATE TABLE PC (model INT, price NUMBER(6, 2) DEFAULT -1, hd INT);
+
+INSERT INTO PC VALUES (1501, 700, 250);
+
+INSERT INTO PC(model, hd, price) VALUES (1501, 250, 700);
+
+INSERT INTO PC(model, hd) VALUES (1501, 250);
+
+INSERT INTO PC(model, hd, price) VALUES (1502, 250, null);
+
+INSERT INTO Laptop
+(SELECT model, price, hd, 17 AS screen
+FROM PC)
+
+-------------------
+
+DELETE statements..
+
+DELETE FROM Table1
+WHERE ...;
+
+Delete beers made by Inbev
+
+-- DDL AND DML statements..
+
+delete from likes table the rows where beer is made by ???
+
+DELETE FROM Likes
+WHERE beer IN (select beerName from Beers where manf='&m');
+
+DELETE FROM Sells
+WHERE beer IN (select beerName from Beers where manf='&m');
+
+DELETE FROM Beers
+WHERE manf='&m';
+
+DECLARE
+  m VARCHAR(10);
+BEGIN
+  m := &m;  
+  DELETE FROM Likes WHERE beer IN (select beerName from Beers where manf=m);
+  DELETE FROM Sells WHERE beer IN (select beerName from Beers where manf=m);
+END;
+
+
+-- what you embed SQL in a programming language
+-- Procedural SQL
+-- Persistent Stored Module (PSM)
+-- Oracle -- PL/SQL; Stored Procedure
+-- Microsoft -- Transact SQL
+
+rollback;
+
+------------------------------
+
+UPDATE Table1 SET col1 = col1 * 2, col2 = col4 + col3
+WHERE ...;
+
+-------------------------------
+

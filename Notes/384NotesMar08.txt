@@ -1,0 +1,100 @@
+
+
+
+CREATE TABLE Emps (eID PRIMARY KEY, eName, ...);
+
+CREATE TABLE Projects (projID PRIMARY KEY, manager, ..., 
+FOREIGN KEY (manager) REFERENCES Emps ON DELETE SET NULL);
+
+CREATE TABLE Dependents (depID PRIMARY KEY, eID REFERENCES Emps ON DELETE CASCADE, ...);
+
+DELETE FROM Emps a particular row..
+how should I handle it?? -- 
+because that emp might be managing projects.. i want to set the manager of those projects to null..
+that emp might have dependents.. i want to delete those dependents..
+
+ON DELETE CASCADE
+ON DELETE SET NULL
+
+-------------------------------------
+
+
+-- Oracle provides a table called dual for you. it has a single row..
+
+SELECT (2 * 10) FROM test;
+
+insert into test values ('a', 'n');
+
+select sysdate from dual;
+
+// oracle's data has hrs, min, seconds..
+
+select to_char (sysdate, 'DD/MM/YYYY HH:MI:SS') from dual;
+
+// how to use DATE in a table...
+DROP TABLE Emp;
+CREATE TABLE Emp (eID INT, eName VARCHAR(20), startDate DATE);
+
+INSERT INTO Emp VALUES (1, 'Noah', TO_DATE('march 15, 2019','month DD, YYYY'));
+
+select eID, eName, startDate + 10 from Emp;
+
+---------------------------
+
+CREATE TABLE Depts (deptID PRIMARY KEY, deptName, bldg, ...);
+CREATE TABLE Emps (empID PRIMARY KEY, dept REFERENCES Depts, eName, startYear, ...);
+
+What questions you may want to ask?
+-- average startyear for a particular dept..
+-- full-time .vs. part-time
+
+-- find emps for a particular dept..
+-- find eID, eName for a particular dept .. (I do not want startYear)
+-- find eID who work for CS and started after 2000
+-- find emps who work in bldg MSB
+-- find emps who work in MSB or FH
+-- find emps who work in MSB and started after 2000
+-- many reports which use aggregate functions.. average, count, ...
+
+what operators are meaningful for working on tables?
+Binary operators: Union, Intersection, Difference
+Unary operators:
+select/filter -- select the rows that evaluate to true for a given boolean expression
+project -- keep only some of the columns.. 
+
+----------------------------------
+
+Relational Algebra:
+handful of operators that we need for operating on tables..
+operands?? -- what is the operation performed on?? -- tables
+result of every operation -- table
+
+relational algebra is closed.
+
+unary operators, binary operators..
+
+relational algebra is studied in 2 flavors.
+	-- tables with no duplicate rows (datalog, ..) -- set-based relational algebra
+	-- tables can have duplicates (SQL) -- multi-set/bag - based relational algebra -- we will study in this class
+
+sets/multi-sets(bags) -- no order among rows
+
+--------------
+Integer Algebra:
++, -, *, /, %, unary -, ..
+
++: binary operator: two integers as input and result is an integer
+-, *, /, %
+unary -: unary operator: one integer as input and result is an integer
+
+(1 + 2) * 3 -- composing operators to make a large expression..
+
+this composition is possible because of the closure property
+algebra is closed..
+
+-----------------
+
+
+
+
+
